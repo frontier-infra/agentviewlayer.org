@@ -14,6 +14,8 @@
   domain: agentviewlayer.org
   validator: /api/validate
   package: @frontier-infra/avl
+  examples: /#examples
+  badges: /badges
   conformance_levels[4]: L0, L1, L2, L3
 
 @actions
@@ -29,6 +31,7 @@
 @context
   > Agent View Layer gives each human page a parallel producer-owned view for AI agents.
   > The validator checks discovery, document structure, TOON shape, and companion resources.
+  > AgentViewLayer.org is the public standards home for examples, badges, and adoption.
 
 @nav
   self: /.agent

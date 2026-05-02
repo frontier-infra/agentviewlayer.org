@@ -87,8 +87,9 @@ export default function Home() {
         </a>
         <nav className="nav-links" aria-label="Primary navigation">
           <a href="#validator">Validator</a>
+          <a href="#explainer">What is AVL?</a>
+          <a href="#examples">Examples</a>
           <a href="#levels">Conformance</a>
-          <a href="#resources">Resources</a>
           <a href="https://github.com/frontier-infra/avl">GitHub</a>
         </nav>
       </header>
@@ -101,9 +102,13 @@ export default function Home() {
             `text/agent-view` companions so agents can understand pages without
             scraping pixels.
           </p>
+          <p className="hero-note">
+            Put in a URL and see whether agents can discover, read, and cite the
+            site from its own structured companion view.
+          </p>
           <div className="hero-actions">
             <a className="button primary" href="#validator">
-              Validate a URL
+              Validate your site
             </a>
             <a
               className="button secondary"
@@ -174,6 +179,33 @@ export default function Home() {
         </section>
       </section>
 
+      <section className="section explainer" id="explainer">
+        <div>
+          <h2>What is AVL?</h2>
+          <p className="section-lede">
+            AVL gives every human page a parallel agent view. The site owner
+            publishes the facts, intent, actions, context, and navigation
+            directly, so agents do not have to guess from layout.
+          </p>
+        </div>
+        <div className="flow-diagram" aria-label="AVL flow diagram">
+          <div className="flow-node human">
+            <span>Human page</span>
+            <strong>/pricing</strong>
+          </div>
+          <div className="flow-path" />
+          <div className="flow-node agent">
+            <span>Agent view</span>
+            <strong>/pricing.agent</strong>
+          </div>
+          <div className="flow-path" />
+          <div className="flow-node result-node">
+            <span>Agent result</span>
+            <strong>Less scraping. Better citations.</strong>
+          </div>
+        </div>
+      </section>
+
       <section className="section" id="levels">
         <h2>Conformance that starts useful and grows up.</h2>
         <p className="section-lede">
@@ -196,6 +228,47 @@ export default function Home() {
           <article className="level">
             <strong>L3</strong>
             <p>Add `@context` and `@nav` for meaning, traversal, and citations.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="section examples" id="examples">
+        <h2>Real `.agent` outputs.</h2>
+        <p className="section-lede">
+          AVL is intentionally readable. These are the kinds of companion views
+          an agent can fetch before deciding what to do next.
+        </p>
+        <div className="example-grid">
+          <article className="agent-example">
+            <div className="example-header">
+              <strong>AgentViewLayer.org</strong>
+              <a href="/.agent">Open .agent</a>
+            </div>
+            <pre>{`@intent
+  purpose: Public standards home and validator
+  audience: developer, maintainer, ai-agent
+  capability: validate, learn, implement, cite
+
+@actions
+  - id: validate_url
+    method: POST
+    href: /api/validate`}</pre>
+          </article>
+          <article className="agent-example">
+            <div className="example-header">
+              <strong>AINode.dev</strong>
+              <a href="https://ainode.dev/.agent">Open .agent</a>
+            </div>
+            <pre>{`@meta
+  route: /
+
+@state
+  product: AINode
+  category: local AI infrastructure
+
+@nav
+  self: /.agent
+  parents: [/]`}</pre>
           </article>
         </div>
       </section>
@@ -232,7 +305,31 @@ curl https://agentviewlayer.org/agent.txt`}</pre>
       </section>
 
       <footer className="footer">
-        <span>Agent View Layer is an open implementation project from frontier-infra.</span>
+        <div className="footer-grid">
+          <div>
+            <strong>Agent View Layer</strong>
+            <p>
+              Offered to the agentic web by{" "}
+              <a href="https://github.com/webdevtodayjason">Jason Brashear</a>,
+              built in public so the next generation of sites can be understood
+              instead of scraped.
+            </p>
+          </div>
+          <div className="footer-links">
+            <a href="/spec">Spec</a>
+            <a href="https://github.com/frontier-infra/avl">GitHub</a>
+            <a href="/docs">Docs</a>
+            <a href="/directory">Directory</a>
+            <a href="https://github.com/frontier-infra/avl/issues">Community</a>
+          </div>
+        </div>
+        <div className="badge-row" aria-label="Project badges">
+          <a href="https://github.com/frontier-infra/agentviewlayer.org">GitHub</a>
+          <a href="https://coderabbit.ai">Reviewed with CodeRabbit</a>
+          <a href="https://blacksmith.sh">CI ready for Blacksmith</a>
+          <a href="https://pages.cloudflare.com">Powered by Cloudflare Pages</a>
+          <a href="https://jasonbrashear.com">Created by Jason Brashear</a>
+        </div>
       </footer>
     </main>
   );

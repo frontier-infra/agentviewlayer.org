@@ -7,6 +7,8 @@ Agent View Layer (AVL) is a producer-owned companion view for AI agents. Every p
 - Homepage and validator: https://agentviewlayer.org/
 - Agent view: https://agentviewlayer.org/.agent
 - Discovery manifest: https://agentviewlayer.org/agent.txt
+- Examples: https://agentviewlayer.org/#examples
+- Badges: https://agentviewlayer.org/badges
 - GitHub: https://github.com/frontier-infra/avl
 - Implementation guide: https://github.com/frontier-infra/avl/blob/main/AI-IMPLEMENTATION.md
 

@@ -32,56 +32,13 @@ interface ValidationResult {
   };
 }
 
-const sampleChecks: ValidationCheck[] = [
-  {
-    id: "discovery.page_agent",
-    status: "pass",
-    message: "Page-specific .agent document is reachable",
-    guidance: {
-      problem: "This confirms agents can fetch the companion view for the page.",
-      fix: ["Keep the .agent route live and update it when the human page changes."],
-      resources: [
-        {
-          label: "Implementation guide",
-          href: "https://github.com/frontier-infra/avl/blob/main/AI-IMPLEMENTATION.md",
-        },
-      ],
-    },
-  },
-  {
-    id: "document.intent",
-    status: "pass",
-    message: "@intent is present",
-    guidance: {
-      problem: "@intent helps agents understand why the page exists.",
-      fix: ["Keep purpose, audience, and capability concise and current."],
-      resources: [
-        {
-          label: "Conformance checks",
-          href: "https://github.com/frontier-infra/avl/blob/main/CONFORMANCE.md",
-        },
-      ],
-    },
-  },
-  {
-    id: "companion.llms_txt",
-    status: "warn",
-    message: "/llms.txt companion is reachable",
-    guidance: {
-      problem: "/llms.txt gives models a broader site summary alongside AVL.",
-      fix: ["Create `/llms.txt` with a short summary and important links."],
-      resources: [{ label: "llms.txt", href: "https://llmstxt.org/" }],
-    },
-  },
-];
-
 export default function Home() {
   const [url, setUrl] = useState("https://agentviewlayer.org");
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [copyState, setCopyState] = useState("Copy Markdown");
 
-  const checks = result?.checks ?? sampleChecks;
   const summaryText = useMemo(() => {
     if (!result) return "Run a URL to see conformance, discovery, and companion checks.";
     return `${result.summary.passed} passed, ${result.summary.warnings} warnings, ${result.summary.failed} failed`;
@@ -91,6 +48,7 @@ export default function Home() {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setCopyState("Copy Markdown");
     setResult(null);
 
     try {
@@ -109,6 +67,14 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function copyMarkdownReport() {
+    if (!result) return;
+    const markdown = formatMarkdownReport(result);
+    await navigator.clipboard.writeText(markdown);
+    setCopyState("Copied");
+    window.setTimeout(() => setCopyState("Copy Markdown"), 1600);
   }
 
   return (
@@ -199,54 +165,91 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="checks">
-              {checks.map((check, index) => (
-                <details
-                  className={`check check-${check.status}`}
-                  key={`${check.id}-${index}`}
-                  open={check.status !== "pass"}
-                >
-                  <summary>
-                    <span className={`check-status ${check.status}`}>
-                      {check.status.toUpperCase()}
-                    </span>
-                    <span className="check-copy">
-                      <span className="check-id">{check.id}</span>
-                      <span className="check-message">
-                        {check.message}
-                        {check.detail ? ` (${check.detail})` : ""}
-                      </span>
-                    </span>
-                    <span className="check-toggle">Details</span>
-                  </summary>
-                  {check.guidance ? (
-                    <div className="check-guidance">
-                      <p>
-                        <strong>Problem</strong>
-                        {check.guidance.problem}
-                      </p>
-                      <div>
-                        <strong>How to fix it</strong>
-                        <ul>
-                          {check.guidance.fix.map(item => (
-                            <li key={item}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      {check.guidance.resources.length ? (
-                        <div className="resource-links">
-                          {check.guidance.resources.map(resource => (
-                            <a href={resource.href} key={resource.href}>
-                              {resource.label}
-                            </a>
-                          ))}
+            {!result ? (
+              <div className="empty-state">
+                <strong>No report yet</strong>
+                <p>
+                  Enter a public URL and run the validator. Results, fix steps,
+                  and an AI-ready Markdown report will appear here.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="report-actions">
+                  <button className="copy-report-button" type="button" onClick={copyMarkdownReport}>
+                    {copyState}
+                  </button>
+                  <span>Copies the full report plus instructions for an AI coding agent.</span>
+                </div>
+
+                {result.ok ? (
+                  <div className="directory-callout">
+                    <strong>Ready for the directory</strong>
+                    <p>
+                      Fully passing sites can request review for the adoption
+                      directory. We review submissions before listing them so the
+                      directory stays useful and spam-free.
+                    </p>
+                    <a
+                      href={`https://github.com/frontier-infra/agentviewlayer.org/issues/new?title=${encodeURIComponent(
+                        `Directory submission: ${result.url}`
+                      )}&body=${encodeURIComponent(formatDirectoryIssue(result))}`}
+                    >
+                      Submit for review
+                    </a>
+                  </div>
+                ) : null}
+
+                <div className="checks">
+                  {result.checks.map((check, index) => (
+                    <details
+                      className={`check check-${check.status}`}
+                      key={`${check.id}-${index}`}
+                      open={check.status !== "pass"}
+                    >
+                      <summary>
+                        <span className={`check-status ${check.status}`}>
+                          {check.status.toUpperCase()}
+                        </span>
+                        <span className="check-copy">
+                          <span className="check-id">{check.id}</span>
+                          <span className="check-message">
+                            {check.message}
+                            {check.detail ? ` (${check.detail})` : ""}
+                          </span>
+                        </span>
+                        <span className="check-toggle">Details</span>
+                      </summary>
+                      {check.guidance ? (
+                        <div className="check-guidance">
+                          <p>
+                            <strong>Problem</strong>
+                            {check.guidance.problem}
+                          </p>
+                          <div>
+                            <strong>How to fix it</strong>
+                            <ul>
+                              {check.guidance.fix.map(item => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          {check.guidance.resources.length ? (
+                            <div className="resource-links">
+                              {check.guidance.resources.map(resource => (
+                                <a href={resource.href} key={resource.href}>
+                                  {resource.label}
+                                </a>
+                              ))}
+                            </div>
+                          ) : null}
                         </div>
                       ) : null}
-                    </div>
-                  ) : null}
-                </details>
-              ))}
-            </div>
+                    </details>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </section>
       </section>
@@ -406,4 +409,77 @@ curl https://agentviewlayer.org/agent.txt`}</pre>
       </footer>
     </main>
   );
+}
+
+function formatMarkdownReport(result: ValidationResult): string {
+  const failingOrWarning = result.checks.filter(check => check.status !== "pass");
+  const checks = failingOrWarning.length ? failingOrWarning : result.checks;
+  const level = result.level ?? "Invalid";
+
+  return `# AVL Validation Report
+
+URL: ${result.url}
+Agent URL: ${result.agentUrl}
+Result: ${result.ok ? "PASS" : "NEEDS WORK"}
+Conformance level: ${level}
+Summary: ${result.summary.passed} passed, ${result.summary.warnings} warnings, ${result.summary.failed} failed
+
+## Instructions for an AI coding agent
+
+You are helping fix Agent View Layer (AVL) readiness for this website. Use the report below as the source of truth.
+
+1. Fix every FAIL item first, then every WARN item.
+2. Preserve existing site behavior and design.
+3. Implement AVL using producer-owned data, not scraped HTML.
+4. Add or update page-specific .agent routes, /agent.txt, /llms.txt, discovery links, headers, and TOON formatting as needed.
+5. Re-run the validator after changes and confirm the site reaches the highest practical AVL level.
+
+## Checks to address
+
+${checks
+  .map(check => {
+    const guidance = check.guidance;
+    const resources = guidance?.resources.length
+      ? guidance.resources
+          .map(resource => `- [${resource.label}](${resource.href})`)
+          .join("\n")
+      : "- No resource links provided.";
+    const fixes = guidance?.fix.length
+      ? guidance.fix.map(item => `- ${item}`).join("\n")
+      : "- Review this check and align it with AVL conformance guidance.";
+
+    return `### ${check.status.toUpperCase()} ${check.id}
+
+${check.message}${check.detail ? ` (${check.detail})` : ""}
+
+Problem:
+${guidance?.problem ?? "No detailed problem statement was provided."}
+
+How to fix:
+${fixes}
+
+Resources:
+${resources}`;
+  })
+  .join("\n\n")}
+`;
+}
+
+function formatDirectoryIssue(result: ValidationResult): string {
+  return `## Directory submission
+
+URL: ${result.url}
+Agent URL: ${result.agentUrl}
+Conformance level: ${result.level ?? "Invalid"}
+Summary: ${result.summary.passed} passed, ${result.summary.warnings} warnings, ${result.summary.failed} failed
+
+## Checklist
+
+- [ ] I own or maintain this site, or I am submitting it on behalf of the owner.
+- [ ] The AVL companion view is intentionally public.
+- [ ] The site should be listed in the Agent View Layer adoption directory.
+
+## Notes
+
+`;
 }

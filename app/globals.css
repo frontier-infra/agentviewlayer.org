@@ -299,6 +299,81 @@ h1 {
   font-size: 14px;
 }
 
+.empty-state {
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  margin-top: 18px;
+  padding: 18px;
+}
+
+.empty-state strong {
+  color: var(--ink);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.report-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.copy-report-button {
+  background: var(--ink);
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 780;
+  min-height: 38px;
+  padding: 0 13px;
+}
+
+.report-actions span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.directory-callout {
+  background: rgba(19, 111, 70, 0.09);
+  border: 1px solid rgba(19, 111, 70, 0.24);
+  border-radius: 8px;
+  margin-top: 12px;
+  padding: 14px;
+}
+
+.directory-callout strong {
+  color: var(--green-strong);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.directory-callout p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+
+.directory-callout a {
+  color: var(--green-strong);
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .checks {
   display: grid;
   gap: 8px;
@@ -423,6 +498,66 @@ h1 {
   font-size: 12px;
   font-weight: 780;
   padding: 6px 9px;
+}
+
+.directory-list {
+  display: grid;
+  gap: 14px;
+}
+
+.directory-entry {
+  align-items: center;
+  background: rgba(255, 253, 246, 0.84);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 86px minmax(0, 1fr);
+  padding: 20px;
+}
+
+.directory-rank {
+  align-items: center;
+  background: var(--green);
+  border-radius: 8px;
+  color: white;
+  display: inline-flex;
+  font-size: 26px;
+  font-weight: 860;
+  height: 64px;
+  justify-content: center;
+  width: 64px;
+}
+
+.directory-entry h2 {
+  font-size: 26px;
+  margin: 0 0 6px;
+}
+
+.directory-entry p {
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.directory-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.directory-meta span,
+.directory-meta a {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 780;
+  padding: 7px 10px;
+}
+
+.directory-meta a {
+  color: var(--green-strong);
 }
 
 .error {
@@ -724,6 +859,11 @@ h1 {
     flex-direction: column;
   }
 
+  .report-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .check summary {
     grid-template-columns: 76px minmax(0, 1fr);
   }
@@ -735,6 +875,11 @@ h1 {
 
   .check-guidance {
     padding-left: 14px;
+  }
+
+  .directory-entry {
+    align-items: start;
+    grid-template-columns: 1fr;
   }
 
   .level-grid,

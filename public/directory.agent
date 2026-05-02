@@ -10,17 +10,22 @@
   capability: discover, cite, compare
 
 @state
-  adopters[2]{name,href,status}:
-    AINode.dev,https://ainode.dev/.agent,early-production
-    AgentViewLayer.org,https://agentviewlayer.org/.agent,self-dogfood
+  listing_policy: reviewed-before-publication
+  adopters[2]{rank,name,href,level,added,status}:
+    1,AINode.dev,https://ainode.dev/.agent,L3,2026-04-16,early-production
+    2,AgentViewLayer.org,https://agentviewlayer.org/.agent,L3,2026-05-02,self-dogfood
 
 @actions
   - id: view_ainode_agent
     method: GET
     href: https://ainode.dev/.agent
+  - id: submit_directory_candidate
+    method: GET
+    href: https://github.com/frontier-infra/agentviewlayer.org/issues/new
 
 @context
   > The directory will grow as public AVL implementations validate.
+  > Reviewed listings keep a permanent position number and date added.
 
 @nav
   self: /directory.agent

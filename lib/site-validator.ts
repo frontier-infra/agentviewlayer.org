@@ -1,4 +1,4 @@
-import { validateAgentViewText, type ValidationCheck } from "./validator";
+import { validateAgentViewText, withGuidance, type ValidationCheck } from "./validator";
 
 export interface SiteValidationResult {
   ok: boolean;
@@ -104,7 +104,7 @@ function finish(
     level,
     url: url.toString(),
     agentUrl: agentUrl.toString(),
-    checks,
+    checks: checks.map(withGuidance),
     sections,
     summary: {
       passed: checks.filter(check => check.status === "pass").length,

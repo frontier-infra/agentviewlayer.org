@@ -9,6 +9,14 @@ interface ValidationCheck {
   status: CheckStatus;
   message: string;
   detail?: string;
+  guidance?: {
+    problem: string;
+    fix: string[];
+    resources: {
+      label: string;
+      href: string;
+    }[];
+  };
 }
 
 interface ValidationResult {
@@ -29,16 +37,41 @@ const sampleChecks: ValidationCheck[] = [
     id: "discovery.page_agent",
     status: "pass",
     message: "Page-specific .agent document is reachable",
+    guidance: {
+      problem: "This confirms agents can fetch the companion view for the page.",
+      fix: ["Keep the .agent route live and update it when the human page changes."],
+      resources: [
+        {
+          label: "Implementation guide",
+          href: "https://github.com/frontier-infra/avl/blob/main/AI-IMPLEMENTATION.md",
+        },
+      ],
+    },
   },
   {
     id: "document.intent",
     status: "pass",
     message: "@intent is present",
+    guidance: {
+      problem: "@intent helps agents understand why the page exists.",
+      fix: ["Keep purpose, audience, and capability concise and current."],
+      resources: [
+        {
+          label: "Conformance checks",
+          href: "https://github.com/frontier-infra/avl/blob/main/CONFORMANCE.md",
+        },
+      ],
+    },
   },
   {
     id: "companion.llms_txt",
     status: "warn",
     message: "/llms.txt companion is reachable",
+    guidance: {
+      problem: "/llms.txt gives models a broader site summary alongside AVL.",
+      fix: ["Create `/llms.txt` with a short summary and important links."],
+      resources: [{ label: "llms.txt", href: "https://llmstxt.org/" }],
+    },
   },
 ];
 
@@ -168,18 +201,50 @@ export default function Home() {
 
             <div className="checks">
               {checks.map((check, index) => (
-                <div className="check" key={`${check.id}-${index}`}>
-                  <span className={`check-status ${check.status}`}>
-                    {check.status.toUpperCase()}
-                  </span>
-                  <div>
-                    <p className="check-id">{check.id}</p>
-                    <p className="check-message">
-                      {check.message}
-                      {check.detail ? ` (${check.detail})` : ""}
-                    </p>
-                  </div>
-                </div>
+                <details
+                  className={`check check-${check.status}`}
+                  key={`${check.id}-${index}`}
+                  open={check.status !== "pass"}
+                >
+                  <summary>
+                    <span className={`check-status ${check.status}`}>
+                      {check.status.toUpperCase()}
+                    </span>
+                    <span className="check-copy">
+                      <span className="check-id">{check.id}</span>
+                      <span className="check-message">
+                        {check.message}
+                        {check.detail ? ` (${check.detail})` : ""}
+                      </span>
+                    </span>
+                    <span className="check-toggle">Details</span>
+                  </summary>
+                  {check.guidance ? (
+                    <div className="check-guidance">
+                      <p>
+                        <strong>Problem</strong>
+                        {check.guidance.problem}
+                      </p>
+                      <div>
+                        <strong>How to fix it</strong>
+                        <ul>
+                          {check.guidance.fix.map(item => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      {check.guidance.resources.length ? (
+                        <div className="resource-links">
+                          {check.guidance.resources.map(resource => (
+                            <a href={resource.href} key={resource.href}>
+                              {resource.label}
+                            </a>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </details>
               ))}
             </div>
           </div>

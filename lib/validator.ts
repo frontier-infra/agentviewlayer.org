@@ -6,6 +6,16 @@ export interface ValidationCheck {
   status: ValidationStatus;
   message: string;
   detail?: string;
+  guidance?: ValidationGuidance;
+}
+
+export interface ValidationGuidance {
+  problem: string;
+  fix: string[];
+  resources: {
+    label: string;
+    href: string;
+  }[];
 }
 
 export interface ValidationReport {
@@ -78,7 +88,7 @@ export function validateAgentViewText(
     ok: checks.every(check => check.status !== "fail"),
     level,
     source: options.source,
-    checks,
+    checks: checks.map(withGuidance),
     sections: Object.keys(parsed.sections),
   };
 }
@@ -341,4 +351,228 @@ function splitCsv(input: string): string[] {
 
   values.push(current.trim());
   return values.filter(value => value.length > 0);
+}
+
+export function withGuidance(check: ValidationCheck): ValidationCheck {
+  const guidance = guidanceById[check.id] ?? fallbackGuidance(check);
+  return { ...check, guidance };
+}
+
+const implementationGuide =
+  "https://github.com/frontier-infra/avl/blob/main/AI-IMPLEMENTATION.md";
+const conformanceGuide =
+  "https://github.com/frontier-infra/avl/blob/main/CONFORMANCE.md";
+const toonGuide =
+  "https://github.com/frontier-infra/avl/blob/main/specs/toon-grammar.md";
+const discoveryGuide =
+  "https://github.com/frontier-infra/avl/blob/main/specs/discovery.md";
+
+const guidanceById: Record<string, ValidationGuidance> = {
+  "document.content_type": {
+    problem:
+      "The agent document should be served as text/agent-view so agents can identify it without sniffing content.",
+    fix: [
+      "Set the response Content-Type header to text/agent-view; version=1; charset=utf-8.",
+      "If the file is static, add a hosting header rule for .agent files.",
+    ],
+    resources: [
+      { label: "Implementation guide", href: implementationGuide },
+      { label: "Conformance checks", href: conformanceGuide },
+    ],
+  },
+  "document.meta": {
+    problem: "The document is missing the @meta section.",
+    fix: [
+      "Add @meta at the top of the .agent document.",
+      "Include v, route, generated, and optionally ttl.",
+    ],
+    resources: [{ label: "Implementation guide", href: implementationGuide }],
+  },
+  "document.meta.v": {
+    problem: "@meta.v tells consumers which AVL version this document uses.",
+    fix: ["Add `v: 1` inside @meta."],
+    resources: [{ label: "Conformance checks", href: conformanceGuide }],
+  },
+  "document.meta.route": {
+    problem: "@meta.route tells agents which human route this companion describes.",
+    fix: ["Add `route: /your-page` inside @meta."],
+    resources: [{ label: "Implementation guide", href: implementationGuide }],
+  },
+  "document.meta.generated": {
+    problem: "@meta.generated tells agents how fresh the companion view is.",
+    fix: ["Add an ISO timestamp, for example `generated: 2026-05-02T12:00:00Z`."],
+    resources: [{ label: "Conformance checks", href: conformanceGuide }],
+  },
+  "document.intent": {
+    problem: "The document is missing @intent, the core section that explains why the page exists.",
+    fix: [
+      "Add @intent after @meta.",
+      "Include purpose, audience, and capability fields.",
+    ],
+    resources: [{ label: "Implementation guide", href: implementationGuide }],
+  },
+  "document.intent.purpose": {
+    problem: "@intent.purpose lets agents decide whether this page is relevant.",
+    fix: ["Add a concise purpose, such as `purpose: Pricing page for product plans`."],
+    resources: [{ label: "Conformance checks", href: conformanceGuide }],
+  },
+  "document.intent.audience": {
+    problem: "@intent.audience tells agents who the page is intended for.",
+    fix: ["Add audiences, for example `audience: visitor, buyer, ai-agent`."],
+    resources: [{ label: "Implementation guide", href: implementationGuide }],
+  },
+  "document.intent.capability": {
+    problem: "@intent.capability tells agents what this page supports.",
+    fix: ["Add capabilities, for example `capability: read, compare, buy`."],
+    resources: [{ label: "Implementation guide", href: implementationGuide }],
+  },
+  "document.state": {
+    problem: "Without @state, agents still need to infer page data from prose or HTML.",
+    fix: [
+      "Add @state with the structured data behind the page.",
+      "Use TOON for lists and tables when the data is repetitive.",
+    ],
+    resources: [
+      { label: "TOON grammar", href: toonGuide },
+      { label: "Implementation guide", href: implementationGuide },
+    ],
+  },
+  "document.actions": {
+    problem: "Without @actions, agents cannot tell what useful operations are available from this page.",
+    fix: [
+      "Add @actions for safe, available affordances.",
+      "Include id, method, and href for each action.",
+    ],
+    resources: [{ label: "Conformance checks", href: conformanceGuide }],
+  },
+  "document.actions.ids": {
+    problem: "Actions need stable IDs so agents can refer to them predictably.",
+    fix: ["Add `- id: action_name` to each action block."],
+    resources: [{ label: "Implementation guide", href: implementationGuide }],
+  },
+  "document.context": {
+    problem: "Without @context, agents miss the short human meaning of the current page state.",
+    fix: ["Add @context with one or two concise quoted summary lines."],
+    resources: [{ label: "Conformance checks", href: conformanceGuide }],
+  },
+  "document.nav": {
+    problem: "Without @nav, agents have fewer signals for traversal and related pages.",
+    fix: ["Add @nav with self, parents, peers, or drilldown links where relevant."],
+    resources: [{ label: "Implementation guide", href: implementationGuide }],
+  },
+  "document.duplicate_section": {
+    problem: "Duplicate sections make the document ambiguous for parsers.",
+    fix: ["Keep only one section for each @meta, @intent, @state, @actions, @context, and @nav block."],
+    resources: [{ label: "Conformance checks", href: conformanceGuide }],
+  },
+  "document.unknown_section": {
+    problem: "Unknown sections may be ignored by current validators and agents.",
+    fix: ["Move experimental data into a known section or document it as an extension."],
+    resources: [{ label: "Spec", href: "https://github.com/frontier-infra/avl/blob/main/specs/avl-agent-view-layer.md" }],
+  },
+  "toon.indentation": {
+    problem: "TOON uses two-space indentation. Odd indentation can break parsing.",
+    fix: ["Normalize nested TOON lines to two spaces per level."],
+    resources: [{ label: "TOON grammar", href: toonGuide }],
+  },
+  "toon.list_count": {
+    problem: "A TOON inline list declares a count that does not match the number of values.",
+    fix: ["Update the count in brackets or add/remove list values so they match."],
+    resources: [{ label: "TOON grammar", href: toonGuide }],
+  },
+  "toon.table_columns": {
+    problem: "A TOON table row has a different number of values than the header fields.",
+    fix: [
+      "Compare the row to the table header.",
+      "Add missing values, remove extras, or quote comma-containing strings.",
+    ],
+    resources: [{ label: "TOON grammar", href: toonGuide }],
+  },
+  "toon.table_rows": {
+    problem: "A TOON table declares a row count that does not match the rows provided.",
+    fix: ["Update the declared count or add/remove rows so the table is consistent."],
+    resources: [{ label: "TOON grammar", href: toonGuide }],
+  },
+  "toon.profile": {
+    problem: "TOON profile checks describe whether the @state shape is parser-friendly.",
+    fix: ["No action needed when this passes. If related TOON checks fail, fix those first."],
+    resources: [{ label: "TOON grammar", href: toonGuide }],
+  },
+  "discovery.html": {
+    problem: "The human page needs to be reachable so validators and agents can discover companion signals.",
+    fix: ["Confirm the URL is public, returns HTTP 200, and is not blocked by redirects or bot protection."],
+    resources: [{ label: "Discovery guidance", href: discoveryGuide }],
+  },
+  "discovery.html_alternate": {
+    problem: "The HTML page does not advertise its agent companion in the head.",
+    fix: [
+      "Add `<link rel=\"alternate\" type=\"text/agent-view\" href=\"/page.agent\">` to the page head.",
+      "For the homepage, point the href to `/.agent`.",
+    ],
+    resources: [
+      { label: "Discovery guidance", href: discoveryGuide },
+      { label: "Implementation guide", href: implementationGuide },
+    ],
+  },
+  "discovery.body_link": {
+    problem: "The page does not expose a crawlable body link or AVL badge.",
+    fix: [
+      "Add a visible or visually-hidden anchor to the .agent companion.",
+      "If you show an AVL badge, make the badge link to the page's .agent file.",
+    ],
+    resources: [
+      { label: "Badge program", href: "https://agentviewlayer.org/badges" },
+      { label: "Discovery guidance", href: discoveryGuide },
+    ],
+  },
+  "discovery.manifest": {
+    problem: "The site-level /agent.txt manifest is missing or unreachable.",
+    fix: [
+      "Create `/agent.txt` at the site root.",
+      "List supported discovery routes, content type, and companion resources.",
+    ],
+    resources: [{ label: "Discovery guidance", href: discoveryGuide }],
+  },
+  "manifest.content_type": {
+    problem: "/agent.txt does not clearly declare text/agent-view support.",
+    fix: ["Add a line such as `content-type: text/agent-view; version=1` to /agent.txt."],
+    resources: [{ label: "Discovery guidance", href: discoveryGuide }],
+  },
+  "companion.llms_txt": {
+    problem: "The site does not expose /llms.txt, the companion summary file for LLMs.",
+    fix: [
+      "Create `/llms.txt` with a concise project summary and important links.",
+      "Link to the AVL agent view and implementation docs where useful.",
+    ],
+    resources: [
+      { label: "llms.txt proposal", href: "https://llmstxt.org/" },
+      { label: "Implementation guide", href: implementationGuide },
+    ],
+  },
+  "discovery.page_agent": {
+    problem: "The page-specific .agent companion could not be reached.",
+    fix: [
+      "For the homepage, publish `/.agent`.",
+      "For nested pages, publish `/path.agent` beside the human route.",
+      "Serve the document with Content-Type `text/agent-view; version=1`.",
+    ],
+    resources: [
+      { label: "Implementation guide", href: implementationGuide },
+      { label: "Discovery guidance", href: discoveryGuide },
+    ],
+  },
+};
+
+function fallbackGuidance(check: ValidationCheck): ValidationGuidance {
+  return {
+    problem:
+      check.status === "pass"
+        ? "This check is currently satisfied."
+        : "This check needs attention before the page reaches stronger AVL readiness.",
+    fix:
+      check.status === "pass"
+        ? ["Keep this signal in place as the page evolves."]
+        : ["Review the check detail and compare the page against AVL conformance guidance."],
+    resources: [{ label: "Conformance checks", href: conformanceGuide }],
+  };
 }

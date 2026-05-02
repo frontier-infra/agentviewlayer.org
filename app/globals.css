@@ -303,20 +303,34 @@ h1 {
   display: grid;
   gap: 8px;
   margin-top: 18px;
-  max-height: 340px;
+  max-height: 430px;
   overflow: auto;
   padding-right: 4px;
 }
 
 .check {
-  align-items: start;
   background: rgba(255, 255, 255, 0.68);
   border: 1px solid var(--line);
   border-radius: 8px;
+  overflow: hidden;
+}
+
+.check[open] {
+  background: #ffffff;
+}
+
+.check summary {
+  align-items: start;
+  cursor: pointer;
   display: grid;
   gap: 10px;
-  grid-template-columns: 76px 1fr;
+  grid-template-columns: 76px minmax(0, 1fr) auto;
+  list-style: none;
   padding: 11px 12px;
+}
+
+.check summary::-webkit-details-marker {
+  display: none;
 }
 
 .check-status {
@@ -343,6 +357,7 @@ h1 {
 }
 
 .check-id {
+  display: block;
   font-size: 13px;
   font-weight: 760;
   margin: 0 0 3px;
@@ -350,9 +365,64 @@ h1 {
 
 .check-message {
   color: var(--muted);
+  display: block;
   font-size: 13px;
   line-height: 1.35;
   margin: 0;
+}
+
+.check-toggle {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 760;
+  padding-top: 4px;
+}
+
+.check[open] .check-toggle {
+  color: var(--green-strong);
+}
+
+.check-guidance {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  display: grid;
+  gap: 12px;
+  padding: 12px 14px 14px 98px;
+}
+
+.check-guidance strong {
+  color: var(--ink);
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.check-guidance p,
+.check-guidance ul {
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.check-guidance ul {
+  padding-left: 18px;
+}
+
+.resource-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.resource-links a {
+  background: rgba(19, 111, 70, 0.1);
+  border: 1px solid rgba(19, 111, 70, 0.2);
+  border-radius: 999px;
+  color: var(--green-strong);
+  font-size: 12px;
+  font-weight: 780;
+  padding: 6px 9px;
 }
 
 .error {
@@ -652,6 +722,19 @@ h1 {
   .result-top {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .check summary {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .check-toggle {
+    grid-column: 2;
+    padding-top: 0;
+  }
+
+  .check-guidance {
+    padding-left: 14px;
   }
 
   .level-grid,

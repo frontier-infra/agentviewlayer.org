@@ -106,6 +106,13 @@ export default function Home() {
             Put in a URL and see whether agents can discover, read, and cite the
             site from its own structured companion view.
           </p>
+          <a className="avl-ready-badge" href="/.agent" aria-label="Open this site's AVL agent view">
+            <span className="badge-mark">AVL</span>
+            <span>
+              <strong>L3 Ready</strong>
+              <small>Validated agent view available</small>
+            </span>
+          </a>
           <div className="hero-actions">
             <a className="button primary" href="#validator">
               Validate your site
@@ -324,6 +331,7 @@ curl https://agentviewlayer.org/agent.txt`}</pre>
           </div>
         </div>
         <div className="badge-row" aria-label="Project badges">
+          <a className="badge-featured" href="/.agent">AVL L3 Ready</a>
           <a href="https://github.com/frontier-infra/agentviewlayer.org">GitHub</a>
           <a href="https://coderabbit.ai">Reviewed with CodeRabbit</a>
           <a href="https://blacksmith.sh">CI ready for Blacksmith</a>

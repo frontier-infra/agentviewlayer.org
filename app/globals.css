@@ -120,9 +120,47 @@ h1 {
   color: var(--muted);
   font-size: 16px;
   line-height: 1.5;
-  margin: 0 0 32px;
+  margin: 0 0 22px;
   max-width: 610px;
   padding-left: 14px;
+}
+
+.avl-ready-badge {
+  align-items: center;
+  background: rgba(255, 253, 246, 0.9);
+  border: 1px solid rgba(19, 111, 70, 0.32);
+  border-radius: 8px;
+  box-shadow: 0 14px 34px rgba(19, 111, 70, 0.11);
+  display: inline-flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 10px 12px;
+}
+
+.badge-mark {
+  align-items: center;
+  background: var(--green);
+  border-radius: 7px;
+  color: white;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 860;
+  height: 42px;
+  justify-content: center;
+  width: 52px;
+}
+
+.avl-ready-badge strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.avl-ready-badge small {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  margin-top: 3px;
 }
 
 .hero-actions {
@@ -555,6 +593,12 @@ h1 {
   font-size: 12px;
   font-weight: 780;
   padding: 8px 11px;
+}
+
+.badge-row .badge-featured {
+  background: rgba(19, 111, 70, 0.12);
+  border-color: rgba(19, 111, 70, 0.34);
+  color: var(--green-strong);
 }
 
 @media (max-width: 920px) {

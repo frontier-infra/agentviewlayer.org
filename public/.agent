@@ -16,6 +16,7 @@
   package: @frontier-infra/avl
   examples: /#examples
   badges: /badges
+  own_badge: AVL L3 Ready
   conformance_levels[4]: L0, L1, L2, L3
 
 @actions

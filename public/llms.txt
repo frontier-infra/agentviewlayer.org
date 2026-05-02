@@ -1,0 +1,20 @@
+# Agent View Layer
+
+Agent View Layer (AVL) is a producer-owned companion view for AI agents. Every page that serves HTML to humans can also serve a structured text/agent-view document for agents.
+
+## Important links
+
+- Homepage and validator: https://agentviewlayer.org/
+- Agent view: https://agentviewlayer.org/.agent
+- Discovery manifest: https://agentviewlayer.org/agent.txt
+- GitHub: https://github.com/frontier-infra/avl
+- Implementation guide: https://github.com/frontier-infra/avl/blob/main/AI-IMPLEMENTATION.md
+
+## Core concepts
+
+- L0: @meta and @intent with discovery.
+- L1: L0 plus @state.
+- L2: L1 plus @actions.
+- L3: L2 plus @context and @nav.
+
+Use the validator on the homepage to check whether a URL exposes AVL discovery and conformance signals.

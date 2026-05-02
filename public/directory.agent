@@ -1,0 +1,28 @@
+@meta
+  v: 1
+  route: /directory
+  generated: 2026-05-02T00:00:00Z
+  ttl: 1h
+
+@intent
+  purpose:    Directory of verified Agent View Layer adopters
+  audience:   developer, researcher, ai-agent
+  capability: discover, cite, compare
+
+@state
+  adopters[2]{name,href,status}:
+    AINode.dev,https://ainode.dev/.agent,early-production
+    AgentViewLayer.org,https://agentviewlayer.org/.agent,self-dogfood
+
+@actions
+  - id: view_ainode_agent
+    method: GET
+    href: https://ainode.dev/.agent
+
+@context
+  > The directory will grow as public AVL implementations validate.
+
+@nav
+  self: /directory.agent
+  parents: [/]
+  peers: [/docs, /spec, /badges]

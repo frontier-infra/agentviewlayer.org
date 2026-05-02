@@ -1,0 +1,27 @@
+@meta
+  v: 1
+  route: /spec
+  generated: 2026-05-02T00:00:00Z
+  ttl: 1h
+
+@intent
+  purpose:    Human-readable entry point to the Agent View Layer specification
+  audience:   standards-participant, developer, ai-agent
+  capability: read, cite, implement
+
+@state
+  sections[6]: meta, intent, state, actions, context, nav
+  canonical_spec: https://github.com/frontier-infra/avl/blob/main/specs/avl-agent-view-layer.md
+
+@actions
+  - id: open_canonical_spec
+    method: GET
+    href: https://github.com/frontier-infra/avl/blob/main/specs/avl-agent-view-layer.md
+
+@context
+  > The canonical versioned specification remains in the GitHub repository.
+
+@nav
+  self: /spec.agent
+  parents: [/]
+  peers: [/docs, /badges, /directory]

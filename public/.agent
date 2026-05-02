@@ -1,0 +1,36 @@
+@meta
+  v: 1
+  route: /
+  generated: 2026-05-02T00:00:00Z
+  ttl: 5m
+
+@intent
+  purpose:    Public standards home and validator for Agent View Layer
+  audience:   developer, maintainer, standards-participant, ai-agent
+  capability: validate, learn, implement, cite
+
+@state
+  project: Agent View Layer
+  domain: agentviewlayer.org
+  validator: /api/validate
+  package: @frontier-infra/avl
+  conformance_levels[4]: L0, L1, L2, L3
+
+@actions
+  - id: validate_url
+    method: POST
+    href: /api/validate
+    inputs[1]{name,type,required}:
+      url,string,true
+  - id: view_github
+    method: GET
+    href: https://github.com/frontier-infra/avl
+
+@context
+  > Agent View Layer gives each human page a parallel producer-owned view for AI agents.
+  > The validator checks discovery, document structure, TOON shape, and companion resources.
+
+@nav
+  self: /.agent
+  parents: [/]
+  peers: [/docs, /spec, /badges, /directory]

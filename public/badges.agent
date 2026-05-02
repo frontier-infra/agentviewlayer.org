@@ -1,0 +1,27 @@
+@meta
+  v: 1
+  route: /badges
+  generated: 2026-05-02T00:00:00Z
+  ttl: 1h
+
+@intent
+  purpose:    Badge program for verified AVL readiness
+  audience:   site-owner, developer, ai-agent
+  capability: understand, validate, display
+
+@state
+  badge_levels[4]: L0, L1, L2, L3
+  validator: /api/validate
+
+@actions
+  - id: validate_url
+    method: POST
+    href: /api/validate
+
+@context
+  > Badges will use validator results to communicate AVL readiness.
+
+@nav
+  self: /badges.agent
+  parents: [/]
+  peers: [/docs, /spec, /directory]

@@ -1,0 +1,25 @@
+version: 1
+content-type: text/agent-view; version=1
+producer: agentviewlayer.org
+project: Agent View Layer
+
+discovery:
+  - /.agent
+  - /{path}.agent
+  - Accept: text/agent-view
+
+routes:
+  - human: /
+    agent: /.agent
+  - human: /docs
+    agent: /docs.agent
+  - human: /spec
+    agent: /spec.agent
+  - human: /badges
+    agent: /badges.agent
+  - human: /directory
+    agent: /directory.agent
+
+companions:
+  llms_txt: /llms.txt
+  github: https://github.com/frontier-infra/avl

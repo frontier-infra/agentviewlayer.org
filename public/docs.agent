@@ -1,0 +1,29 @@
+@meta
+  v: 1
+  route: /docs
+  generated: 2026-05-02T00:00:00Z
+  ttl: 1h
+
+@intent
+  purpose:    Implementation documentation for Agent View Layer
+  audience:   developer, ai-agent
+  capability: learn, implement, validate
+
+@state
+  guides[3]{name,href,type}:
+    AI implementation brief,https://github.com/frontier-infra/avl/blob/main/AI-IMPLEMENTATION.md,guide
+    Conformance,https://github.com/frontier-infra/avl/blob/main/CONFORMANCE.md,reference
+    CMS adapters,https://github.com/frontier-infra/avl/tree/main/plugins,integration
+
+@actions
+  - id: open_implementation_guide
+    method: GET
+    href: https://github.com/frontier-infra/avl/blob/main/AI-IMPLEMENTATION.md
+
+@context
+  > Documentation points implementers to the canonical GitHub source of truth.
+
+@nav
+  self: /docs.agent
+  parents: [/]
+  peers: [/spec, /badges, /directory]

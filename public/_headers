@@ -1,0 +1,27 @@
+/.agent
+  Content-Type: text/agent-view; version=1; charset=utf-8
+  Cache-Control: public, max-age=300
+
+/docs.agent
+  Content-Type: text/agent-view; version=1; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/spec.agent
+  Content-Type: text/agent-view; version=1; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/badges.agent
+  Content-Type: text/agent-view; version=1; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/directory.agent
+  Content-Type: text/agent-view; version=1; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/agent.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=300
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=300
